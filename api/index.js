@@ -18,6 +18,12 @@ mongoose
 
 app.use("/api/v1/auth", authRoutes);
 
+const cartRoutes = require('../routes/cart');
+const wishRoutes = require('../routes/wish');
+const checkRoutes = require('../routes/checkout');
+app.use('/api/v1/cart', cartRoutes);
+app.use('/api/v1/wish', wishRoutes);
+app.use('/api/v1/checkout', checkRoutes);
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 module.exports = app;
