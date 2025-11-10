@@ -3,34 +3,20 @@ const mongoose = require('mongoose');
 const wishSchema = new mongoose.Schema({
     wishOwner: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: false
+        ref: "User",
+        // required: true
     },
     products: [
         {
             product_id: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: 'Product',
-                required: false
+                ref: "Product",
+                required: true
             },
-            count: {
-                type: Number,
-                default: 1
-            },
-            price: {
-                type: Number,
-                required: false
-            }
+            count: { type: Number, default: 1 },
+            price: { type: Number, required: true }
         }
-    ],
-    totalWishPrice: {
-        type: Number,
-        default: 0
-    },
-    numOfWishItems: {
-        type: Number,
-        default: 0
-    }
-});
+    ]
+}, { timestamps: true });
 
-module.exports = mongoose.model('Wishlist', wishSchema);
+module.exports = mongoose.model("Wishlist", wishSchema);

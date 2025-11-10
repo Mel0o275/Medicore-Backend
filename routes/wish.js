@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const wishController = require('../controllers/wishlist/wishlist');
+const checkLoginAuth = require('../middleware/checkLoginAuth');
 
-router.get('/', wishController.getUserWish);
+router.get('/', checkLoginAuth,wishController.getUserWish);
 
-router.post('/', wishController.addUserWish);
+router.post('/', checkLoginAuth,wishController.addUserWish);
 
-router.delete('/:id', wishController.deleteItemWish);
+router.delete('/:id', checkLoginAuth,wishController.deleteItemWish);
 
 module.exports = router;
