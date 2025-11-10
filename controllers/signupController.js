@@ -36,11 +36,9 @@ const register = async (req, res) => {
       // role: "admin",
     });
     await user.save();
-    res
-      .status(201)
-      .json({ message: "User registered successfully", data: user });
+    res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
-    res.status(500).json({ message: err.message, data: null });
+    res.status(500).json({ message: err.message });
   }
 };
 
