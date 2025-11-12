@@ -29,13 +29,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// get best seller products
 router.route("/best-seller").get(aliasTopProducts, getAllproducts);
 
-// get product statistics by categories
 router.route("/Categories-stats").get(getCategoriesStats);
 
-// get product statistics by brands
 router.route("/Brands-stats").get(getBrandsStats);
 
 router
