@@ -13,15 +13,12 @@ const categoryRoutes = require("../routes/categoryRoutes");
 const userRoute = require("../routes/user.route");
 const notiRoute = require("../routes/noti.route");
 
-
-
 const app = express();
 const port = process.env.PORT || 4000;
 const URL = process.env.DB_URL;
 
 // Malak
 const HttpStatus = require("../utils/httpStatusText");
-
 
 const authRoutes = require("../routes/authRoutes");
 
