@@ -3,6 +3,18 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 
+const app = express();
+const port = process.env.PORT || 4000;
+const URL = process.env.DB_URL;
+
+const cors = require('cors');
+app.use(cors());
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
 const cartRoutes = require("../routes/cart");
 const wishRoutes = require("../routes/wish");
 const checkRoutes = require("../routes/checkout");
@@ -15,9 +27,6 @@ const notiRoute = require("../routes/noti.route");
 
 
 
-const app = express();
-const port = process.env.PORT || 4000;
-const URL = process.env.DB_URL;
 
 // Malak
 const HttpStatus = require("../utils/httpStatusText");
