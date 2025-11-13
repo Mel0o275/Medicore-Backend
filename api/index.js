@@ -26,11 +26,8 @@ const userRoute = require("../routes/user.route");
 const notiRoute = require("../routes/noti.route");
 
 
-
-
 // Malak
 const HttpStatus = require("../utils/httpStatusText");
-
 
 const authRoutes = require("../routes/authRoutes");
 

@@ -4,14 +4,16 @@ const cloudinary = require("../config/cloudinary");
 const Product = require("../model/ProductsModel");
 const APIFeatures = require("../utils/apiFeatures");
 const aliasTopProducts = (req, res, next) => {
-  req.query.limit = "10";
-  req.query.sort = "-ratings,price";
-  req.query.fields = "title,price,desc,ratings,category,brand";
+  req.aliasQuery = {
+    limit: "8",
+    sort: "-ratings,price",
+  };
   next();
 };
 const getAllproducts = async (req, res) => {
   try {
-    const features = new APIFeatures(Product.find(), req.query)
+    const reqQuery = req.aliasQuery || req.query;
+    const features = new APIFeatures(Product.find(), reqQuery)
       .filter()
       .sort()
       .limitFields()
@@ -192,6 +194,7 @@ const getCategoriesStats = async (req, res) => {
     ]);
     res.status(200).json({
       status: "Sucess",
+      results: stats.length,
       data: { stats },
     });
   } catch (err) {
@@ -223,6 +226,7 @@ const getBrandsStats = async (req, res) => {
     ]);
     res.status(200).json({
       status: "Sucess",
+      results: stats.length,
       data: { stats },
     });
   } catch (err) {
