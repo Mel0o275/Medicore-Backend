@@ -12,14 +12,6 @@ const deleteUser = asyncWrapper(async (req, res, next) => {
     return next(error);
   }
 
-  if (req.user.role !== "admin" && req.user._id.toString() !== userId) {
-    const error = appError.create(
-      "Not authorized to delete this user",
-      403,
-      HttpStatus.FAIL
-    );
-    return next(error);
-  }
 
   await User.findByIdAndDelete(userId);
 
