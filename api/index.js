@@ -21,6 +21,7 @@ const checkRoutes = require("../routes/checkout");
 const productRoutes = require("../routes/productsRoutes");
 const categoryRoutes = require("../routes/categoryRoutes");
 
+
 // Malak
 const userRoute = require("../routes/user.route");
 const notiRoute = require("../routes/noti.route");
@@ -45,6 +46,7 @@ app.use("/api/v1/wish", wishRoutes);
 app.use("/api/v1/checkout", checkRoutes);
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/categories", categoryRoutes);
+
 // Malak
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/notifications", notiRoute);
