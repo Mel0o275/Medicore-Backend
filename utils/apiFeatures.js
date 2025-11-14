@@ -15,7 +15,11 @@ class APIFeatures {
 
     for (const key in filters) {
       if (typeof filters[key] === "string") {
-        filters[key] = { $regex: filters[key], $options: "i" };
+        if (filters[key].includes(",")) {
+          filters[key] = { $in: filters[key].split(",").map((v) => v.trim()) };
+        } else {
+          filters[key] = { $regex: filters[key], $options: "i" };
+        }
       }
     }
 
