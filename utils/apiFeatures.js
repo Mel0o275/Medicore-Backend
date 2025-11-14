@@ -11,12 +11,19 @@ class APIFeatures {
     excludedFields.forEach((el) => delete queryObj[el]);
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);
-    this.query = this.query.find(JSON.parse(queryStr));
-    // if (this.queryString.search) {
-    //   this.query = this.query.find({
-    //     title: { $regex: this.queryString.search, $options: "i" },
-    //   });
-    // }
+    let filters = JSON.parse(queryStr);
+
+    for (const key in filters) {
+      if (typeof filters[key] === "string") {
+        filters[key] = { $regex: filters[key], $options: "i" };
+      }
+    }
+
+    if (this.queryString.search) {
+      filters.title = { $regex: this.queryString.search, $options: "i" };
+    }
+    this.query = this.query.find(filters);
+
     return this;
   }
   sort() {
