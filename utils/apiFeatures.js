@@ -8,28 +8,32 @@ class APIFeatures {
   filter() {
     const queryObj = { ...this.queryString };
     const excludedFields = ["page", "sort", "limit", "fields", "search"];
-    excludedFields.forEach((el) => delete queryObj[el]);
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);
-    let filters = JSON.parse(queryStr);
+    excludedFields.forEach((field) => delete queryObj[field]);
 
-    for (const key in filters) {
-      if (typeof filters[key] === "string") {
-        if (filters[key].includes(",")) {
-          filters[key] = { $in: filters[key].split(",").map((v) => v.trim()) };
-        } else {
-          filters[key] = { $regex: filters[key], $options: "i" };
-        }
+    const filters = {};
+
+    for (const key in queryObj) {
+      const value = queryObj[key];
+
+      if (key.includes("[") && key.includes("]")) {
+        const field = key.split("[")[0];
+        const operator = key.match(/\[(.*)\]/)[1];
+        filters[field] = { [`$${operator}`]: parseFloat(value) };
+      } else if (typeof value === "string" && value.includes(",")) {
+        filters[key] = { $in: value.split(",").map((v) => v.trim()) };
+      } else {
+        filters[key] = { $regex: value, $options: "i" };
       }
     }
 
     if (this.queryString.search) {
       filters.title = { $regex: this.queryString.search, $options: "i" };
     }
-    this.query = this.query.find(filters);
 
+    this.query = this.query.find(filters);
     return this;
   }
+
   sort() {
     if (this.queryString.sort) {
       let sortBy = this.queryString.sort.split(",").join(" ");
