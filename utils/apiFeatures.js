@@ -1,7 +1,5 @@
 class APIFeatures {
   constructor(query, queryString) {
-    // query : Product.find() or Category.find()
-    // queryString : req.query
     this.query = query;
     this.queryString = queryString;
   }
