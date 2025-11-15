@@ -22,9 +22,12 @@ const getAllproducts = async (req, res) => {
     const products = await features.query;
 
     if (products.length === 0) {
-      return res.status(404).json({
-        status: "Failed",
-        message: "No products found for the given filters.",
+      return res.status(200).json({
+        status: "success",
+        message: "No products found.",
+        data: {
+          products: [],
+        },
       });
     }
 
