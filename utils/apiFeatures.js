@@ -16,7 +16,10 @@ class APIFeatures {
       if (key.includes("[") && key.includes("]")) {
         const field = key.split("[")[0];
         const operator = key.match(/\[(.*)\]/)[1];
-        filters[field] = { [`$${operator}`]: parseFloat(value) };
+
+        if (!filters[field]) filters[field] = {};
+
+        filters[field][`$${operator}`] = parseFloat(value);
       } else if (typeof value === "string" && value.includes(",")) {
         filters[key] = { $in: value.split(",").map((v) => v.trim()) };
       } else {
@@ -27,8 +30,8 @@ class APIFeatures {
     if (this.queryString.search) {
       filters.title = { $regex: this.queryString.search, $options: "i" };
     }
-
     this.query = this.query.find(filters);
+
     return this;
   }
 
@@ -52,10 +55,13 @@ class APIFeatures {
     return this;
   }
   paginate() {
-    const page = this.queryString.page * 1 || 1;
-    const limit = this.queryString.limit * 1 || 100;
-    const skip = (page - 1) * limit;
-    this.query = this.query.skip(skip).limit(limit);
+    const page = this.queryString.page * 1;
+    const limit = this.queryString.limit * 1;
+
+    if (limit) {
+      const skip = (page - 1) * limit || 0;
+      this.query = this.query.skip(skip).limit(limit);
+    }
     return this;
   }
 }

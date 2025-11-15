@@ -50,10 +50,13 @@ const getProduct = async (req, res) => {
         message: "Product not found",
       });
     }
-
+    const relatedProducts = await Product.find({
+      category: product.category,
+      _id: { $ne: product._id },
+    }).limit(5);
     res.status(200).json({
       status: "Sucess",
-      data: { product },
+      data: { product, relatedProducts: relatedProducts || [] },
     });
   } catch (err) {
     res.status(400).json({
