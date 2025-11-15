@@ -1,24 +1,40 @@
 class APIFeatures {
   constructor(query, queryString) {
-    // query : Product.find() or Category.find()
-    // queryString : req.query
     this.query = query;
     this.queryString = queryString;
   }
   filter() {
     const queryObj = { ...this.queryString };
     const excludedFields = ["page", "sort", "limit", "fields", "search"];
-    excludedFields.forEach((el) => delete queryObj[el]);
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);
-    this.query = this.query.find(JSON.parse(queryStr));
-    if (this.queryString.search) {
-      this.query = this.query.find({
-        title: { $regex: this.queryString.search, $options: "i" },
-      });
+    excludedFields.forEach((field) => delete queryObj[field]);
+
+    const filters = {};
+
+    for (const key in queryObj) {
+      const value = queryObj[key];
+
+      if (key.includes("[") && key.includes("]")) {
+        const field = key.split("[")[0];
+        const operator = key.match(/\[(.*)\]/)[1];
+
+        if (!filters[field]) filters[field] = {};
+
+        filters[field][`$${operator}`] = parseFloat(value);
+      } else if (typeof value === "string" && value.includes(",")) {
+        filters[key] = { $in: value.split(",").map((v) => v.trim()) };
+      } else {
+        filters[key] = { $regex: value, $options: "i" };
+      }
     }
+
+    if (this.queryString.search) {
+      filters.title = { $regex: this.queryString.search, $options: "i" };
+    }
+    this.query = this.query.find(filters);
+
     return this;
   }
+
   sort() {
     if (this.queryString.sort) {
       let sortBy = this.queryString.sort.split(",").join(" ");
@@ -39,10 +55,13 @@ class APIFeatures {
     return this;
   }
   paginate() {
-    const page = this.queryString.page * 1 || 1;
-    const limit = this.queryString.limit * 1 || 100;
-    const skip = (page - 1) * limit;
-    this.query = this.query.skip(skip).limit(limit);
+    const page = this.queryString.page * 1;
+    const limit = this.queryString.limit * 1;
+
+    if (limit) {
+      const skip = (page - 1) * limit || 0;
+      this.query = this.query.skip(skip).limit(limit);
+    }
     return this;
   }
 }

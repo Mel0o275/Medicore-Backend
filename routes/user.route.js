@@ -40,6 +40,6 @@ router.route("/get-users").get(checkLoginAuth, checkRoleAuth("admin"), getUsers)
 
 router.route("/get-user/:id").get(checkLoginAuth, checkRoleAuth("admin"), getUser);
 
-router.route("/delete-user/:id").delete(checkLoginAuth, checkRoleAuth("admin"), delUser);
+router.route("/delete-user/:id").delete(checkLoginAuth,  delUser);
 
 module.exports = router;
