@@ -42,7 +42,11 @@ const getAllproducts = async (req, res) => {
 };
 const getProduct = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { visits: 1 } },
+      { new: true }
+    );
 
     if (!product) {
       return res.status(404).json({
