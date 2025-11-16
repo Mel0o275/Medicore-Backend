@@ -22,9 +22,12 @@ const getAllproducts = async (req, res) => {
     const products = await features.query;
 
     if (products.length === 0) {
-      return res.status(404).json({
-        status: "Failed",
-        message: "No products found for the given filters.",
+      return res.status(200).json({
+        status: "success",
+        message: "No products found.",
+        data: {
+          products: [],
+        },
       });
     }
 
@@ -42,7 +45,11 @@ const getAllproducts = async (req, res) => {
 };
 const getProduct = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { visits: 1 } },
+      { new: true }
+    );
 
     if (!product) {
       return res.status(404).json({
@@ -50,10 +57,13 @@ const getProduct = async (req, res) => {
         message: "Product not found",
       });
     }
-
+    const relatedProducts = await Product.find({
+      category: product.category,
+      _id: { $ne: product._id },
+    }).limit(5);
     res.status(200).json({
       status: "Sucess",
-      data: { product },
+      data: { product, relatedProducts: relatedProducts || [] },
     });
   } catch (err) {
     res.status(400).json({
