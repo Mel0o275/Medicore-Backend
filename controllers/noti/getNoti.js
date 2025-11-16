@@ -4,8 +4,6 @@ const appError = require("../../utils/appError");
 const HttpStatus = require("../../utils/httpStatusText");
 
 const getNoti = asyncWrapper(async (req, res, next) => {
-  const userId = req.user._id;
-
   if (!req.user) {
     const error = appError.create(
       "Unauthorized - No user found",
@@ -15,17 +13,23 @@ const getNoti = asyncWrapper(async (req, res, next) => {
     return next(error);
   }
 
-  const notifications = await Notification.find({ userId }).sort({
-    createdAt: -1,
-  });
+  const userId = req.user._id;
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const notifications = await Notification.find({ userId: userId })
+    .skip(skip)
+    .limit(limit)
+    .sort({ createdAt: -1 });
 
   if (!notifications || notifications.length === 0) {
-    const error = appError.create(
-      "No notifications found",
-      404,
-      HttpStatus.FAIL
-    );
-    return next(error);
+    return res.status(200).json({
+      status: HttpStatus.SUCCESS,
+      count: 0,
+      data: { notifications: [] },
+    });
   }
 
   res.status(200).json({

@@ -17,12 +17,11 @@ const clearNoti = asyncWrapper(async (req, res, next) => {
 
   const notifications = await Notification.find({ userId });
   if (!notifications || notifications.length === 0) {
-    const error = appError.create(
-      "No notifications to clear",
-      404,
-      HttpStatus.FAIL
-    );
-    return next(error);
+    return res.status(200).json({
+      status: HttpStatus.SUCCESS,
+      count: 0,
+      data: { notifications: [] },
+    });
   }
 
   await Notification.deleteMany({ userId });
