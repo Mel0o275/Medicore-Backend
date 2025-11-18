@@ -50,11 +50,11 @@ const getAllproducts = async (req, res) => {
 const getProduct = async (req, res) => {
   try {
     const isAdmin = req.query.role === "admin";
-    const product = await Product.findByIdAndUpdate(
-      req.params.id,
-      { $inc: { visits: 1 } },
-      { new: true }
-    ).setOptions({ isAdmin });
+    const update = isAdmin ? {} : { $inc: { visits: 1 } };
+
+    const product = await Product.findByIdAndUpdate(req.params.id, update, {
+      new: true,
+    }).setOptions({ isAdmin });
 
     if (!product) {
       return res.status(404).json({
@@ -82,13 +82,26 @@ const getProduct = async (req, res) => {
 const createProduct = async (req, res) => {
   try {
     const images = [];
-    if (req.files && req.files.length > 0) {
+    const uploadBuffer = (fileBuffer) => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "products" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+
+        stream.end(fileBuffer);
+      });
+    };
+    if (req.files?.length) {
       for (const file of req.files) {
-        const result = await cloudinary.uploader.upload(file.path, {
-          folder: "products",
+        const result = await uploadBuffer(file.buffer);
+        images.push({
+          url: result.secure_url,
+          public_id: result.public_id,
         });
-        fs.unlinkSync(file.path);
-        images.push({ url: result.secure_url, public_id: result.public_id });
       }
     }
 
@@ -112,9 +125,11 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const isAdmin = req?.user?.role === "admin";
+
     const product = await Product.findById(req.params.id).setOptions({
       isAdmin,
     });
+
     if (!product) {
       return res
         .status(404)
@@ -123,28 +138,42 @@ const updateProduct = async (req, res) => {
 
     let updatedImages = product.images || [];
 
-    if (req.files && req.files.length > 0) {
-      if (updatedImages.length > 0) {
-        for (const img of updatedImages) {
-          await cloudinary.uploader.destroy(img.public_id);
-        }
-      }
+    const uploadBuffer = (fileBuffer) => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "products" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+        stream.end(fileBuffer);
+      });
+    };
 
-      updatedImages = [];
+    if (req.files?.length > 0) {
+      const uploadedImages = [];
 
       for (const file of req.files) {
-        const result = await cloudinary.uploader.upload(file.path, {
-          folder: "products",
-        });
-        fs.unlinkSync(file.path);
-        updatedImages.push({
+        const result = await uploadBuffer(file.buffer);
+        uploadedImages.push({
           url: result.secure_url,
           public_id: result.public_id,
         });
       }
+
+      if (uploadedImages.length === 1) {
+        await cloudinary.uploader.destroy(product.images[1].public_id);
+        updatedImages[1] = uploadedImages[0];
+      } else if (uploadedImages.length === 2) {
+        for (const img of product.images) {
+          await cloudinary.uploader.destroy(img.public_id);
+        }
+        updatedImages = uploadedImages;
+      }
     }
 
-    let updateData = { ...req.body, images: updatedImages };
+    const updateData = { ...req.body, images: updatedImages };
 
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
