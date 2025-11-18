@@ -49,11 +49,12 @@ const getAllproducts = async (req, res) => {
 };
 const getProduct = async (req, res) => {
   try {
+    const isAdmin = req.query.role === "admin";
     const product = await Product.findByIdAndUpdate(
       req.params.id,
       { $inc: { visits: 1 } },
       { new: true }
-    );
+    ).setOptions({ isAdmin });
 
     if (!product) {
       return res.status(404).json({
@@ -64,7 +65,9 @@ const getProduct = async (req, res) => {
     const relatedProducts = await Product.find({
       category: product.category,
       _id: { $ne: product._id },
-    }).limit(5);
+    })
+      .limit(5)
+      .setOptions({ isAdmin });
     res.status(200).json({
       status: "Sucess",
       data: { product, relatedProducts: relatedProducts || [] },
@@ -108,7 +111,10 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const isAdmin = req?.user?.role === "admin";
+    const product = await Product.findById(req.params.id).setOptions({
+      isAdmin,
+    });
     if (!product) {
       return res
         .status(404)
@@ -144,7 +150,7 @@ const updateProduct = async (req, res) => {
       req.params.id,
       updateData,
       { new: true, runValidators: true }
-    );
+    ).setOptions({ isAdmin });
 
     res.status(200).json({
       status: "Success",
@@ -160,7 +166,10 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const isAdmin = req?.user?.role === "admin";
+    const product = await Product.findById(req.params.id).setOptions({
+      isAdmin,
+    });
     if (!product) {
       return res
         .status(404)
@@ -173,7 +182,7 @@ const deleteProduct = async (req, res) => {
       }
     }
 
-    await Product.findByIdAndDelete(req.params.id);
+    await Product.findByIdAndDelete(req.params.id).setOptions({ isAdmin });
 
     res.status(204).json({
       status: "Success",
