@@ -12,8 +12,12 @@ const aliasTopProducts = (req, res, next) => {
 };
 const getAllproducts = async (req, res) => {
   try {
+    const isAdmin = req.query.role === "admin";
     const reqQuery = req.aliasQuery || req.query;
-    const features = new APIFeatures(Product.find(), reqQuery)
+    const features = new APIFeatures(
+      Product.find().setOptions({ isAdmin }),
+      reqQuery
+    )
       .filter()
       .sort()
       .limitFields()
