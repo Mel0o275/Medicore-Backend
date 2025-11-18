@@ -15,18 +15,7 @@ const {
 const checkRoleAuth = require("../middleware/checkRoleAuth");
 
 // where images will be stored till uploaded on cloudinary
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "..", "tmp"));
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split("/")[1];
-    // handling uploading more than one image at a time with adding this unique value
-    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, `product-${unique}.${ext}`);
-  },
-});
-
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 router.route("/best-seller").get(aliasTopProducts, getAllproducts);
