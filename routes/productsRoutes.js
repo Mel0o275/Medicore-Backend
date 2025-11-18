@@ -17,7 +17,7 @@ const checkRoleAuth = require("../middleware/checkRoleAuth");
 // where images will be stored till uploaded on cloudinary
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/img");
+    cb(null, "tmp");
   },
   filename: (req, file, cb) => {
     const ext = file.mimetype.split("/")[1];
