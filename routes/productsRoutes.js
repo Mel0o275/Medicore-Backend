@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-
+const path = require("path");
 const {
   getAllproducts,
   getProduct,
@@ -17,7 +17,7 @@ const checkRoleAuth = require("../middleware/checkRoleAuth");
 // where images will be stored till uploaded on cloudinary
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "tmp");
+    cb(null, path.join(__dirname, "..", "tmp"));
   },
   filename: (req, file, cb) => {
     const ext = file.mimetype.split("/")[1];
