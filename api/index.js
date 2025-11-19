@@ -8,38 +8,37 @@ const port = process.env.PORT || 4000;
 const URL = process.env.DB_URL;
 
 const allowedOrigins = [
-  "http://localhost:5173" ,
-  "https://medicore-backend.vercel.app/api/v1"
+  "http://localhost:5173",
+  "https://medicore-backend.vercel.app/api/v1",
 ];
 
-const cors = require("cors");  
+const cors = require("cors");
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)){
-      callback(null, true);
-  } 
-  else {
-    callback(new Error("Not allowed by CORS"));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
       }
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-  credentials: true
-}));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  })
+);
 
 const cartRoutes = require("../routes/cart");
 const wishRoutes = require("../routes/wish");
 const checkRoutes = require("../routes/checkout");
 const productRoutes = require("../routes/productsRoutes");
 const categoryRoutes = require("../routes/categoryRoutes");
+const reviewRoutes = require("../routes/reviewRoutes");
 const orderRoutes = require("../routes/orderroute");
-
-
 
 // Malak
 const userRoute = require("../routes/user.route");
 const notiRoute = require("../routes/noti.route");
-
 
 // Malak
 const HttpStatus = require("../utils/httpStatusText");
@@ -60,8 +59,8 @@ app.use("/api/v1/wish", wishRoutes);
 app.use("/api/v1/checkout", checkRoutes);
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/categories", categoryRoutes);
+app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/orders", orderRoutes);
-
 
 // Malak
 app.use("/api/v1/user", userRoute);
