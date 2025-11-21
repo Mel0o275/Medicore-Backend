@@ -35,6 +35,7 @@ const productRoutes = require("../routes/productsRoutes");
 const categoryRoutes = require("../routes/categoryRoutes");
 const reviewRoutes = require("../routes/reviewRoutes");
 const orderRoutes = require("../routes/orderroute");
+const feedbackRoutes = require("../routes/feedbackRoutes");
 
 // Malak
 const userRoute = require("../routes/user.route");
@@ -44,6 +45,7 @@ const notiRoute = require("../routes/noti.route");
 const HttpStatus = require("../utils/httpStatusText");
 
 const authRoutes = require("../routes/authRoutes");
+app.use("/api/v1/feedback", feedbackRoutes);
 
 app.use(express.json());
 
