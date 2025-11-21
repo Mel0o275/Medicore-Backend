@@ -45,7 +45,6 @@ const notiRoute = require("../routes/noti.route");
 const HttpStatus = require("../utils/httpStatusText");
 
 const authRoutes = require("../routes/authRoutes");
-app.use("/api/v1/feedback", feedbackRoutes);
 
 app.use(express.json());
 
@@ -63,6 +62,7 @@ app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/orders", orderRoutes);
+app.use("/api/v1/feedback", feedbackRoutes);
 
 // Malak
 app.use("/api/v1/user", userRoute);
