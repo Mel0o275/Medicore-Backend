@@ -22,7 +22,7 @@ const getReviewsByProduct = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       status: "Failed",
-      message: err,
+      message: err.message,
     });
   }
 };
@@ -41,13 +41,6 @@ const createReview = async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-    const existingReview = await Review.findOne({ userId, productId });
-    if (existingReview) {
-      return res.status(400).json({
-        message: "You already reviewed this product",
-      });
-    }
-
     const newReview = await Review.create({
       productId,
       userId,
@@ -57,10 +50,13 @@ const createReview = async (req, res) => {
     });
 
     res.status(201).json({ message: "Review created", review: newReview });
-  } catch (error) {
+  } catch (err) {
     res.status(400).json({
       status: "Failed",
-      message: err.message,
+      message:
+        err.code === 11000
+          ? "You have already reviewed this product"
+          : err.message,
     });
   }
 };
@@ -89,7 +85,7 @@ const updateReview = async (req, res) => {
     await existingReview.save();
 
     res.status(200).json({ message: "Review updated", review: existingReview });
-  } catch (error) {
+  } catch (err) {
     res.status(400).json({
       status: "Failed",
       message: err.message,
