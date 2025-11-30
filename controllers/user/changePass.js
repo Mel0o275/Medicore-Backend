@@ -17,7 +17,7 @@ const changePass = asyncWrapper(async (req, res, next) => {
     return next(error);
   }
 
- const isSamePassword = await bcrypt.compare(password, user.password);
+  const isSamePassword = await bcrypt.compare(password, user.password);
   if (isSamePassword) {
     const error = appError.create(
       "New Password is the same as old Password!",
@@ -32,11 +32,9 @@ const changePass = asyncWrapper(async (req, res, next) => {
   user.password = hashedPassword;
   await user.save();
 
+  user.password = undefined;
 
-  // Will delete user for check only !
-  res
-    .status(201)
-    .json({ status: HttpStatus.SUCCESS, data: { user } });
+  res.status(201).json({ status: HttpStatus.SUCCESS, data: { user } });
 });
 
 module.exports = changePass;
