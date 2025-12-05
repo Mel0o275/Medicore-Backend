@@ -7,16 +7,10 @@ const app = express();
 const port = process.env.PORT || 4000;
 const URL = process.env.DB_URL;
 
-// const allowedOrigins = [
-//   "http://localhost:5173",
-//   "https://medicore-backend.vercel.app/api/v1",
-//   "https://medicore-theta.vercel.app/",
-// ];
-
 const allowedOrigins = [
   "http://localhost:5173",
   "https://medicore-backend.vercel.app",
-  "https://medicore-theta.vercel.app/",
+  "https://medicore-theta.vercel.app",
 ];
 
 const cors = require("cors");
