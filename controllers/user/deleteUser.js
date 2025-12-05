@@ -12,8 +12,6 @@ const deleteUser = asyncWrapper(async (req, res, next) => {
     return next(error);
   }
 
-  
-
   await User.findByIdAndDelete(userId);
 
   res.status(200).json({

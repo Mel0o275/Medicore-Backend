@@ -79,7 +79,9 @@ const productSchema = new mongoose.Schema(
 );
 
 productSchema.pre(/^find/, function (next) {
-  this.find({ secretProduct: { $ne: true } });
+  if (!this.getOptions().isAdmin) {
+    this.find({ secretProduct: { $ne: true } });
+  }
   this.start = Date.now();
   next();
 });

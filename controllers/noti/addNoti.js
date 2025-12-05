@@ -4,8 +4,6 @@ const appError = require("../../utils/appError");
 const HttpStatus = require("../../utils/httpStatusText");
 
 const addNoti = asyncWrapper(async (req, res, next) => {
-  const userId = req.user._id;
-
   if (!req.user) {
     const error = appError.create(
       "Unauthorized - No user found",
@@ -14,6 +12,8 @@ const addNoti = asyncWrapper(async (req, res, next) => {
     );
     return next(error);
   }
+
+  const userId = req.user._id;
 
   const { title, message, type, status } = req.body;
 
