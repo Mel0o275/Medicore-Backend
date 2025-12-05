@@ -2,8 +2,17 @@ const Order = require("../model/ordermodel");
 
 exports.getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find();
-    res.json(orders);
+    const orders = await Order.find().sort({ createdAt: -1 });
+    res.json({ orders });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getUserOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ userId: req.user.id }).sort({ createdAt: -1 });
+    res.json({ orders });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -11,7 +20,13 @@ exports.getAllOrders = async (req, res) => {
 
 exports.createOrder = async (req, res) => {
   const { customerName, items, totalPrice } = req.body;
-  const newOrder = new Order({ customerName, items, totalPrice });
+
+  const newOrder = new Order({
+    userId: req.user.id,
+    customerName,
+    items,
+    totalPrice,
+  });
 
   try {
     const savedOrder = await newOrder.save();
@@ -27,16 +42,15 @@ exports.updateOrder = async (req, res) => {
 
     if (req.body.status === "Order is delivered") {
       const now = new Date();
-      const hours = now.getHours().toString().padStart(2, "0");
-      const minutes = now.getMinutes().toString().padStart(2, "0");
-      updateData.deliveredAt = `${hours}:${minutes}`;
+      updateData.deliveredAt =
+        now.getHours().toString().padStart(2, "0") +
+        ":" +
+        now.getMinutes().toString().padStart(2, "0");
     }
 
-    const updatedOrder = await Order.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true }
-    );
+    const updatedOrder = await Order.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+    });
 
     if (!updatedOrder)
       return res.status(404).json({ message: "Order is not found" });
