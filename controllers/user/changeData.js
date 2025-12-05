@@ -11,7 +11,7 @@ const changeData = asyncWrapper(async (req, res, next) => {
     phoneNumber,
     dateOfBirth,
     gender,
-    role
+    role,
   } = req.body;
 
   const userId = req.user._id;
@@ -45,6 +45,8 @@ const changeData = asyncWrapper(async (req, res, next) => {
   user.gender = gender || user.gender;
 
   await user.save();
+
+  user.password = undefined;
 
   res.status(200).json({
     status: "SUCCESS",

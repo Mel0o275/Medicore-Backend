@@ -10,6 +10,7 @@ const URL = process.env.DB_URL;
 const allowedOrigins = [
   "http://localhost:5173",
   "https://medicore-backend.vercel.app/api/v1",
+  "https://medicore-theta.vercel.app/"
 ];
 
 const cors = require("cors");
@@ -35,6 +36,7 @@ const productRoutes = require("../routes/productsRoutes");
 const categoryRoutes = require("../routes/categoryRoutes");
 const reviewRoutes = require("../routes/reviewRoutes");
 const orderRoutes = require("../routes/orderroute");
+const feedbackRoutes = require("../routes/feedbackRoutes");
 
 // Malak
 const userRoute = require("../routes/user.route");
@@ -61,6 +63,7 @@ app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/orders", orderRoutes);
+app.use("/api/v1/feedback", feedbackRoutes);
 
 // Malak
 app.use("/api/v1/user", userRoute);

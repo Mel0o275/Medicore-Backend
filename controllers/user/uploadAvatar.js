@@ -42,6 +42,9 @@ const uploadAvatar = asyncWrapper(async (req, res, next) => {
     { profilePic: uploadResponse.secure_url },
     { new: true }
   );
+
+  updatedUser.password = undefined;
+
   res
     .status(201)
     .json({ status: HttpStatus.SUCCESS, data: { user: updatedUser } });

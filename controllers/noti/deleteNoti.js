@@ -4,7 +4,6 @@ const appError = require("../../utils/appError");
 const HttpStatus = require("../../utils/httpStatusText");
 
 const deleteNoti = asyncWrapper(async (req, res, next) => {
-  const userId = req.user._id;
   const notiId = req.params.id;
 
   if (!req.user) {
@@ -15,6 +14,7 @@ const deleteNoti = asyncWrapper(async (req, res, next) => {
     );
     return next(error);
   }
+  const userId = req.user._id;
 
   const notification = await Notification.findOne({ _id: notiId, userId });
 
