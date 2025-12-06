@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 // Express
 const express = require("express");
 // Router
@@ -45,4 +43,3 @@ router.route("/get-user/:id").get(checkLoginAuth,  getUser);
 router.route("/delete-user/:id").delete(checkLoginAuth,  delUser);
 
 module.exports = router;
->>>>>>> 308fbb0e998a734f52ea1ba350117d8ef28248bd
