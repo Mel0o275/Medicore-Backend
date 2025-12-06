@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-=======
+
 class APIFeatures {
   constructor(query, queryString) {
     this.query = query;
@@ -75,4 +74,3 @@ class APIFeatures {
   }
 }
 module.exports = APIFeatures;
->>>>>>> 308fbb0e998a734f52ea1ba350117d8ef28248bd
