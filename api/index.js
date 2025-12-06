@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-=======
+
 require("dotenv").config();
 
 const express = require("express");
@@ -83,4 +82,3 @@ app.use((error, req, res, next) => {
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 module.exports = app;
->>>>>>> 308fbb0e998a734f52ea1ba350117d8ef28248bd
