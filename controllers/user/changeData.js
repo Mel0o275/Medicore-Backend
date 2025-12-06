@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-=======
+
 const asyncWrapper = require("../../middleware/asyncWrapper");
 const User = require("../../model/users");
 const HttpStatus = require("../../utils/httpStatusText");
@@ -58,4 +57,3 @@ const changeData = asyncWrapper(async (req, res, next) => {
 });
 
 module.exports = changeData;
->>>>>>> 308fbb0e998a734f52ea1ba350117d8ef28248bd
