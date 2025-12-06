@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-=======
+
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
@@ -37,4 +36,4 @@ router
   .patch(upload.array("images", 2), checkRoleAuth("admin"), updateProduct)
   .delete(checkRoleAuth("admin"), deleteProduct);
 module.exports = router;
->>>>>>> 308fbb0e998a734f52ea1ba350117d8ef28248bd
+
