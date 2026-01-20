@@ -42,6 +42,9 @@ const feedbackRoutes = require("../routes/feedbackRoutes");
 // Malak
 const userRoute = require("../routes/user.route");
 const notiRoute = require("../routes/noti.route");
+const aiChatBot = require("../routes/aiChatBot");
+const otp = require("../routes/otp");
+
 
 // Malak
 const HttpStatus = require("../utils/httpStatusText");
@@ -69,6 +72,9 @@ app.use("/api/v1/feedback", feedbackRoutes);
 // Malak
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/notifications", notiRoute);
+app.use("/api/v1", aiChatBot);
+app.use("/api/v1/otp", otp);
+
 
 //  Global error handler
 app.use((error, req, res, next) => {
