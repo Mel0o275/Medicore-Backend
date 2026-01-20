@@ -12,6 +12,10 @@ const deleteUser = asyncWrapper(async (req, res, next) => {
     return next(error);
   }
 
+// <<<<<<< HEAD
+// =======
+
+// >>>>>>> Malak
   await User.findByIdAndDelete(userId);
 
   res.status(200).json({
