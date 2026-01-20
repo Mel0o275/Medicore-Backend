@@ -10,7 +10,7 @@ require("dotenv").config();
 
 const helper = new NodemailerHelper(
   process.env.EMAIL_USER,
-  process.env.EMAIL_PASS
+  process.env.EMAIL_PASS,
 );
 const sendOTP = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
@@ -18,6 +18,10 @@ const sendOTP = asyncWrapper(async (req, res, next) => {
 
   if (!user)
     return next(appError.create("User not found", 404, HttpStatus.FAIL));
+
+  if (!redisClient.isOpen) {
+    await redisClient.connect();
+  }
 
   const otp = generateOTP();
 
@@ -27,7 +31,7 @@ const sendOTP = asyncWrapper(async (req, res, next) => {
     user.email,
     "Pharmacy Medicore",
     `Your OTP is send. Do not share it. It expires in 3 minute.`,
-    otp
+    otp,
   );
 
   res.status(200).json({

@@ -18,16 +18,19 @@ const aiChatBotController = asyncWrapper(async (req, res, next) => {
     contents: prompt || "Explain how AI works in a few words",
   });
 
-  if (!response || !response.text) {
-    const error = appError.create("AI failed", 500, HttpStatus.FAIL);
-    return next(error);
+ const reply =
+    response?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+  if (!reply) {
+    return next(appError.create("AI failed", 500, HttpStatus.FAIL));
   }
-  reply.replace(/\n/g, "<br />");
+
+  const formattedReply = response.text.replace(/\n/g, "<br />");
 
   return res.status(200).json({
     status: HttpStatus.SUCCESS,
     data: {
-      reply: response.text,
+      reply: formattedReply,
     },
   });
 });
