@@ -1,22 +1,12 @@
-const { createClient } = require("redis");
 require("dotenv").config();
 
-let redisClient;
 
-if (!global.redisClient) {
-  global.redisClient = createClient({
-    password: process.env.REDIS_PASS,
-    socket: {
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT,
-    },
-  });
 
-  global.redisClient.on("error", (err) =>
-    console.error("Redis Client Error", err)
-  );
-}
+const { Redis } = require("@upstash/redis");
 
-redisClient = global.redisClient;
+const redisClient = new Redis({
+  url: process.env.REDIS_URL,
+  token: process.env.REDIS_TOKEN,
+});
 
 module.exports = redisClient;

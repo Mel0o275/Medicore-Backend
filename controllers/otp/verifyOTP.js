@@ -1,3 +1,5 @@
+
+
 const asyncWrapper = require("../../middleware/asyncWrapper");
 const redisClient = require("../../utils/redisClient");
 const appError = require("../../utils/appError");
@@ -7,16 +9,14 @@ const verifyOTP = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
   const { otp } = req.body;
 
-  if (!redisClient.isOpen) {
-    await redisClient.connect();
-  }
-
   const savedOtp = await redisClient.get(`otp:${userId}`);
 
   if (!savedOtp)
     return next(appError.create("OTP expired", 400, HttpStatus.FAIL));
-  if (savedOtp !== String(otp))
+
+  if (String(savedOtp) !== String(otp)) {
     return next(appError.create("Invalid OTP", 400, HttpStatus.FAIL));
+  }
 
   await redisClient.del(`otp:${userId}`);
 

@@ -1,3 +1,5 @@
+
+
 const asyncWrapper = require("../../middleware/asyncWrapper");
 const User = require("../../model/users");
 const appError = require("../../utils/appError");
@@ -5,13 +7,8 @@ const HttpStatus = require("../../utils/httpStatusText");
 const generateOTP = require("./generateOTP");
 const redisClient = require("../../utils/redisClient");
 
-const NodemailerHelper = require("nodemailer-otp");
-require("dotenv").config();
+const nodemailer = require("nodemailer");
 
-const helper = new NodemailerHelper(
-  process.env.EMAIL_USER,
-  process.env.EMAIL_PASS,
-);
 const sendOTP = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
   const user = await User.findById(userId);
@@ -19,24 +16,36 @@ const sendOTP = asyncWrapper(async (req, res, next) => {
   if (!user)
     return next(appError.create("User not found", 404, HttpStatus.FAIL));
 
-  if (!redisClient.isOpen) {
-    await redisClient.connect();
-  }
-
   const otp = generateOTP();
 
-  await redisClient.set(`otp:${userId}`, otp, { EX: 180 });
+  // save OTP for 3 minutes
+  await redisClient.set(`otp:${userId}`, otp, { ex: 180 });
 
-  await helper.sendEmail(
-    user.email,
-    "Pharmacy Medicore",
-    `Your OTP is send. Do not share it. It expires in 3 minute.`,
-    otp,
-  );
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  await transporter.sendMail({
+    from: `"Pharmacy Medicore" <${process.env.EMAIL_USER}>`,
+    to: user.email,
+
+    subject: "Your OTP Code",
+    html: `
+      <h2>Pharmacy Medicore</h2>
+      <p>Your OTP code is:</p>
+      <h1>${otp}</h1>
+      <p>This code expires in 3 minutes. Do not share it.</p>
+    `,
+  });
+
 
   res.status(200).json({
     status: HttpStatus.SUCCESS,
-    message: "An OTP has been sent.",
+    message: "OTP has been sent to your email",
   });
 });
 

@@ -1,13 +1,11 @@
-const NodemailerHelper = require("nodemailer-otp");
-require("dotenv").config();
 
-const helper = new NodemailerHelper(
-  process.env.EMAIL_USER,
-  process.env.EMAIL_PASS
-);
 
-const generateOTP = () => {
-  return helper.generateOtp(6);
+const generateOTP = (length = 6) => {
+  return Math.floor(
+    Math.pow(10, length - 1) +
+      Math.random() * 9 * Math.pow(10, length - 1)
+  ).toString();
 };
 
 module.exports = generateOTP;
+
